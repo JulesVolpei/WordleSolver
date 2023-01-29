@@ -8,7 +8,7 @@ class WordleSolver:
     __dicoPositionLettre = {}
     __lettres = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
     __lettresPasPresentes = ""
-    __lettresPresentes = ""
+    __lettresPresentes = {0: '', 1: '', 2: '', 3: '', 4: ''}
     __lettresPresentesMaisPasAuBonEndroit = ""
 
     def creerListeDeMots(self, str):
@@ -68,7 +68,7 @@ class WordleSolver:
             self.__dicoMotsAvecScore[mot] = 0
             # On parcourt notre mot
             for lettre in range(len(mot)):
-                # On incrémente notre score par le produit de la fréquence de la lettre en générale par sa position dans le mot
+                # On incrémente notre score par le produit de la fréquence de la lettre en général par sa position dans le mot
                 self.__dicoMotsAvecScore[mot] += self.__dicoPositionLettre[mot[lettre]][lettre] * self.__dicoFrequenceLettre[mot[lettre]]
 
     def motTrouve(self, resultatMot):
@@ -77,6 +77,34 @@ class WordleSolver:
         :return: Si le mot est trouvé ou pas
         """
         return resultatMot == "XXXXX"
+
+    def triageLettresPasPresentes(self):
+        """
+        Cette méthode trie les clés de notre dictionnaire avec les lettres qui ne sont pas censées comporter
+        """
+
+        print("triage aaaaaaaaaaa : ",  self.__dicoMotsAvecScore)
+        # On parcourt l'ensemble des clés dont les lettres comportent les lettres pas présentes
+        print(self.__lettresPasPresentes)
+        for i in [j for j in self.__dicoMotsAvecScore if any(lettre in j for lettre in self.__lettresPasPresentes)]:
+            print(i)
+            # On enlève la clé
+            del self.__dicoMotsAvecScore[i]
+
+    def triageLettresPresentes(self):
+        listeCleASupprimer = []
+        # On obtient les indices des lettres présentes
+        for i in [j for j in self.__lettresPresentes if not self.__lettresPresentes[j] == '']:
+            # On parcourt les clés de notre dictionnaire
+            for k in self.__dicoMotsAvecScore:
+                # Si la lettre n'est pas la bonne
+                print(k[i], " == ", self.__lettresPresentes[i])
+                if not k[i] == self.__lettresPresentes[i] and k not in listeCleASupprimer:
+                    listeCleASupprimer.append(k)
+            listeCleASupprimer = list(set(listeCleASupprimer))
+        for k in listeCleASupprimer:
+            del self.__dicoMotsAvecScore[k]
+
     def trouveMotLePlusOptimise(self, mot, resultatMot):
         """
         :param mot: Mot donné pour essayer de trouver le mot caché
@@ -86,19 +114,27 @@ class WordleSolver:
         # On parcourt notre résultat
         for i in range(len(resultatMot)):
             # Si on trouve '_' (lettre pas présente) et que la lettre n'est pas dans notre liste de lettres pas présentes
-            if not mot[i] in self.__lettresPasPresentes and resultatMot[i] == '_':
+            if not mot[i] in self.__lettresPasPresentes and resultatMot[i] == '_' and mot[i] not in [j for j in self.__lettresPresentes.values()]:
                 # On ajoute la lettre
                 self.__lettresPasPresentes += mot[i]
             # Si on trouve 'X' (lettre présente) et que la lettre n'est pas dans notre liste de lettres présentes
             if not mot[i] in self.__lettresPresentes and resultatMot[i] == 'X':
                 # On ajoute la lettre
-                self.__lettresPresentes += mot[i]
+                self.__lettresPresentes[i] = mot[i]
             # Si on trouve '-' (lettre présente pas au bon endroit) et que la lettre n'est pas dans notre liste de lettres présentes mais pas au bon endroit
             if not mot[i] in self.__lettresPresentesMaisPasAuBonEndroit and resultatMot[i] == '-':
                 self.__lettresPresentesMaisPasAuBonEndroit += mot[i]
-        print(self.__lettresPresentes)
-        print(self.__lettresPresentesMaisPasAuBonEndroit)
+        # Premier tri où on supprime les clés avec les clés qui comportent les lettres pas présentes
+        print("Avant : ", len([i for i in self.__dicoMotsAvecScore]))
+        self.triageLettresPasPresentes()
+        print("Triage pas présents : ", len([i for i in self.__dicoMotsAvecScore]))
         print(self.__lettresPasPresentes)
+        self.triageLettresPresentes()
+        print("Triage présents : ", len([i for i in self.__dicoMotsAvecScore]))
+        print(self.__lettresPresentes)
+        print(max(self.__dicoMotsAvecScore, key=self.__dicoMotsAvecScore.get))
+        print(self.__dicoMotsAvecScore)
+
 
 
     def jeu(self, str):
@@ -108,6 +144,12 @@ class WordleSolver:
         self.creerDictPositionLettres()
         self.creerDictFrequenceLettres()
         self.creeDictScoreMot()
+        print(self.__dicoMotsAvecScore["SEULE"])
+        self.trouveMotLePlusOptimise("TAREE", "___-X")
+        self.trouveMotLePlusOptimise("SEMEE", "XX__X")
+        self.trouveMotLePlusOptimise("SEXEE", "XX__X")
+        self.trouveMotLePlusOptimise("SEINE", "XX__X")
+        self.trouveMotLePlusOptimise("SELLE", "XX_XX")
 
 
 
