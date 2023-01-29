@@ -55,9 +55,17 @@ class WordleSolver:
                 self.__dicoPositionLettre[mot[lettre]][lettre] += 1
 
     def creeDictScoreMot(self):
+        """
+        Cette méthode va permettre d'assigner un score à chaque mot.
+        Clé -> mot | Valeur -> score
+        """
+        # On parcourt tout nos mots
         for mot in self.__listeDeMots:
+            # On assigne une nouvelle clé au dictionnaire
             self.__dicoMotsAvecScore[mot] = 0
+            # On parcourt nootre mot
             for lettre in range(len(mot)):
+                # On incrémente notre score par le produit de la fréquence de la lettre en générale par sa position dans le mot
                 self.__dicoMotsAvecScore[mot] += self.__dicoPositionLettre[mot[lettre]][lettre] * self.__dicoFrequenceLettre[mot[lettre]]
 
 
