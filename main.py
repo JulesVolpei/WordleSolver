@@ -26,17 +26,6 @@ class WordleSolver:
                 # On réinitialise le mot
                 mot = ""
 
-
-    def creerDictMots(self):
-        """
-        Cette méthode remplie le dictionnaire comportant tout les mots avec leur score.
-        Clé -> mot | Valeur -> score
-        """
-        # On parcourt la liste de mots
-        for i in self.__listeDeMots:
-            # On ajoute le mot au dictionnaire des scores avant de lui mettre 0 en valeur de base
-            self.__dicoMotsAvecScore[i] = 0
-
     def creerDictFrequenceLettres(self):
         """
         Cette méthode remplie le dictionnaire des fréquences, attribuant à chaque lettre sa fréquence d'apparition dans la base de 7000 mots.
@@ -65,6 +54,13 @@ class WordleSolver:
                 # On incrémente le coefficient à l'indice de la position de la lettre
                 self.__dicoPositionLettre[mot[lettre]][lettre] += 1
 
+    def creeDictScoreMot(self):
+        for mot in self.__listeDeMots:
+            self.__dicoMotsAvecScore[mot] = 0
+            for lettre in range(len(mot)):
+                self.__dicoMotsAvecScore[mot] += self.__dicoPositionLettre[mot[lettre]][lettre] * self.__dicoFrequenceLettre[mot[lettre]]
+
+
 # ----------------- GETTERS -----------------
     def getListeDeMots(self):
         """
@@ -78,11 +74,14 @@ class WordleSolver:
         """
         return self.__dicoPositionLettre
 
-    def getDictionFrequenceLettre(self):
+    def getDictFrequenceLettre(self):
         """
         :return: Le dictionnaire avec la fréquence d'apparition des lettres
         """
         return self.__dicoFrequenceLettre
+
+    def getDictScoreMot(self):
+        return self.__dicoMotsAvecScore
 
 
 if __name__ == '__main__':
@@ -91,4 +90,6 @@ if __name__ == '__main__':
     test.creerListeDeMots(chaineAvecMot)
     test.creerDictPositionLettres()
     test.creerDictFrequenceLettres()
-    print(test.getDictionFrequenceLettre())
+    test.creeDictScoreMot()
+    print("Score max : ", max(test.getDictScoreMot(), key=test.getDictScoreMot().get), " -> ", test.getDictScoreMot()[max(test.getDictScoreMot(), key=test.getDictScoreMot().get)])
+
