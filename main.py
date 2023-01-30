@@ -98,7 +98,6 @@ class WordleSolver:
             # On parcourt les clés de notre dictionnaire
             for k in self.__dicoMotsAvecScore:
                 # Si la lettre n'est pas la bonne
-                print(k[i], " == ", self.__lettresPresentes[i])
                 if not k[i] == self.__lettresPresentes[i] and k not in listeCleASupprimer:
                     listeCleASupprimer.append(k)
             listeCleASupprimer = list(set(listeCleASupprimer))
@@ -114,6 +113,7 @@ class WordleSolver:
         # On parcourt notre résultat
         for i in range(len(resultatMot)):
             # Si on trouve '_' (lettre pas présente) et que la lettre n'est pas dans notre liste de lettres pas présentes
+            print([j for j in self.__lettresPresentes.values()], " ", self.__lettresPasPresentes)
             if not mot[i] in self.__lettresPasPresentes and resultatMot[i] == '_' and mot[i] not in [j for j in self.__lettresPresentes.values()]:
                 # On ajoute la lettre
                 self.__lettresPasPresentes += mot[i]
@@ -121,6 +121,9 @@ class WordleSolver:
             if not mot[i] in self.__lettresPresentes and resultatMot[i] == 'X':
                 # On ajoute la lettre
                 self.__lettresPresentes[i] = mot[i]
+                for k in self.__lettresPasPresentes:
+                    if k == mot[i]:
+                        self.__lettresPasPresentes = self.__lettresPasPresentes.replace(k, "")
             # Si on trouve '-' (lettre présente pas au bon endroit) et que la lettre n'est pas dans notre liste de lettres présentes mais pas au bon endroit
             if not mot[i] in self.__lettresPresentesMaisPasAuBonEndroit and resultatMot[i] == '-':
                 self.__lettresPresentesMaisPasAuBonEndroit += mot[i]
@@ -144,12 +147,11 @@ class WordleSolver:
         self.creerDictPositionLettres()
         self.creerDictFrequenceLettres()
         self.creeDictScoreMot()
-        print(self.__dicoMotsAvecScore["SEULE"])
-        self.trouveMotLePlusOptimise("TAREE", "___-X")
-        self.trouveMotLePlusOptimise("SEMEE", "XX__X")
-        self.trouveMotLePlusOptimise("SEXEE", "XX__X")
-        self.trouveMotLePlusOptimise("SEINE", "XX__X")
-        self.trouveMotLePlusOptimise("SELLE", "XX_XX")
+        self.trouveMotLePlusOptimise("TAREE", "__-X-")
+        self.trouveMotLePlusOptimise("SEMEE", "_X_X_")
+        self.trouveMotLePlusOptimise("RENEE", "-XXX_")
+
+
 
 
 
